@@ -17,13 +17,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import bfa.blair.movieapp.model.Movie
+import bfa.blair.movieapp.model.getMovies
+import bfa.blair.movieapp.navigation.MovieScreens
+import bfa.blair.movieapp.widgets.MovieRow
 
 @Composable
 fun HomeScreen(navController : NavController) {
 
     Scaffold(topBar = {
-        TopAppBar(backgroundColor = Color.Magenta,
-            elevation = 5.dp
+        TopAppBar(backgroundColor = Color.Transparent,
+            elevation = 0.dp
         ) {
             Text(text = "Movies")
         }
@@ -35,19 +39,13 @@ fun HomeScreen(navController : NavController) {
 
 @Composable
 fun MainContent(navController: NavController,
-    movieList: List<String> = listOf(
-    "Avatar",
-    "300",
-    "Harry Porter",
-    "Hills",
-    "Life",
-    "Pure Letter"
-)) {
+    movieList: List<Movie> = getMovies()
+) {
     Column(modifier = Modifier.padding(12.dp)) {
         LazyColumn{
             items(items = movieList) {
                 MovieRow(movie = it) { movie ->
-                    Log.d("TAG Movie", "MainContent: $movie")
+                    navController.navigate(route = MovieScreens.DetailsScreen.name+"/$movie")
                 }
             }
         }
@@ -55,30 +53,3 @@ fun MainContent(navController: NavController,
     }
 }
 
-@Composable
-fun MovieRow(movie : String, onItemClick : (String) -> Unit) {
-    Card(modifier = Modifier
-        .padding(4.dp)
-        .fillMaxWidth()
-        .height(130.dp)
-        .clickable {
-            onItemClick(movie)
-        },
-        shape = RoundedCornerShape(corner = CornerSize(16.dp)),
-        elevation = 6.dp) {
-        Row(verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start) {
-            Surface(modifier = Modifier
-                .padding(12.dp)
-                .size(100.dp),
-                shape = RectangleShape,
-                elevation = 4.dp) {
-                Icon(imageVector = Icons.Default.AccountBox,
-                    contentDescription = "Movie Image")
-            }
-            Text(text = movie)
-
-
-        }
-    }
-}
